@@ -51,6 +51,10 @@ public class ParkingSpot {
         return id;
     }
 
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
     public boolean isSpotAvailable() {
         return isAvailable;
     }

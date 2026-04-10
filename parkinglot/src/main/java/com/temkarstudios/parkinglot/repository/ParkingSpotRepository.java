@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface ParkingSpotRepository extends JpaRepository<ParkingSpot, Long> {
     
     Optional<ParkingSpot> findFirstByVehicleIsNullAndType(ParkingSpotType type);
+    
+    long countByIsAvailableTrue();
 }
