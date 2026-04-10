@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: configapp-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: configapp
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - configapp-network
+
+  config-app-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: configapp-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://admin:password@mongodb:27017/configapp?authSource=admin
+      SPRING_DATA_MONGODB_DATABASE: configapp
+      JWT_SECRET: your-super-secret-key-change-this-in-production-environment-with-at-least-256-bits
+      JWT_EXPIRATION: 3600000
+      JWT_REFRESH_EXPIRATION: 604800000
+    depends_on:
+      - mongodb
+    networks:
+      - configapp-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  configapp-network:
+    driver: bridge
