@@ -65,7 +65,7 @@ public class AsyncDatabaseUpdateService {
             if (ticketOptional.isPresent()) {
                 Ticket ticket = ticketOptional.get();
                 ticket.setExitTime(exitTime);
-                ticket.setPrice(fare);
+                ticket.setFinalPrice(fare);
                 ticketRepository.saveAndFlush(ticket);
             }
         } catch (Exception e) {

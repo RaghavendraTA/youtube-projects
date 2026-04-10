@@ -27,7 +27,7 @@
         │                                                │
         └────┬─────────────────────────────┬────────────┘
              │                             │
-             │ (CACHE FIRST)              │ (ASYNC)
+             │ (CACHE FIRST)               │ (ASYNC)
              ▼                             ▼
     ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
     ┃  ParkingSpotManager       ┃  ┃ AsyncDatabaseUpdateService ┃

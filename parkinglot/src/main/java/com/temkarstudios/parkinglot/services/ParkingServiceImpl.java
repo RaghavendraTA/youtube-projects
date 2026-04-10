@@ -105,7 +105,7 @@ public class ParkingServiceImpl implements ParkingService {
         
         // Update ticket pricing immediately for response
         ticket.setExitTime(exitTime);
-        ticket.setPrice(fare);
+        ticket.setFinalPrice(fare);
         
         // Update database asynchronously to ensure consistency
         asyncDatabaseUpdateService.updateTicketExit(ticketId, exitTime, fare);
