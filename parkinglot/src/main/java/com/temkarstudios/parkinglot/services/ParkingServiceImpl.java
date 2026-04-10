@@ -1,7 +1,10 @@
 package com.temkarstudios.parkinglot.services;
 
 import com.temkarstudios.parkinglot.dto.Request;
+import com.temkarstudios.parkinglot.dto.SpotRequest;
+import com.temkarstudios.parkinglot.interfaces.IFareStrategy;
 import com.temkarstudios.parkinglot.interfaces.ParkingService;
+import com.temkarstudios.parkinglot.manager.FairCalculationFactory;
 import com.temkarstudios.parkinglot.manager.TicketManager;
 import com.temkarstudios.parkinglot.manager.VehicleManager;
 import com.temkarstudios.parkinglot.model.ParkingSpot;
@@ -12,20 +15,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.temkarstudios.parkinglot.manager.ParkingSpotManager;
 import com.temkarstudios.parkinglot.model.Vehicle;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
 @Service
 public class ParkingServiceImpl implements ParkingService {
 
-    @Autowired
-    private ParkingSpotManager parkingSpotManager;
+    private final ParkingSpotManager parkingSpotManager;
+    private final VehicleManager vehicleManager;
+    private final TicketManager ticketManager;
 
     @Autowired
-    private VehicleManager vehicleManager;
-
-    @Autowired
-    private TicketManager ticketManager;
+    public ParkingServiceImpl(ParkingSpotManager parkingSpotManager, VehicleManager vehicleManager, TicketManager ticketManager) {
+        this.parkingSpotManager = parkingSpotManager;
+        this.vehicleManager = vehicleManager;
+        this.ticketManager = ticketManager;
+    }
 
     // Ticket should get generated
     public Ticket enterVehicle(Request request) throws Exception {
@@ -54,18 +60,17 @@ public class ParkingServiceImpl implements ParkingService {
         return computePricing(ticket);
     }
 
+    @Override
+    public void addNewSpot(SpotRequest request) throws Exception {
+        parkingSpotManager.createNewSpot(request);
+    }
+
     private Ticket computePricing(Ticket ticket) {
-        var diffTime = ticket.getExitTime().getTime() - ticket.getEntryTime().getTime();
-
-        float absDiff = Math.abs(diffTime);
-        var totalMinutes = Math.floor(absDiff / (1000 * 60));
-        var hours = Math.floor(totalMinutes / 60);
-        var minutes = totalMinutes % 60;
-
-        float totalPrice = (float) (hours * 2 * ticket.getParkingSpot().getPrice());
-        totalPrice += (minutes > 30 ? 2 : 1) * ticket.getParkingSpot().getPrice();
-
-        return ticketManager.updatePrice(ticket, totalPrice);
+        int hour = LocalDateTime.now().getHour();
+        boolean isPeakHour = (hour >= 7 && hour <= 10) || (hour >= 16 && hour <= 19);
+        IFareStrategy strategy = FairCalculationFactory.getFareCalculator(isPeakHour);
+        float fare = strategy.CalculateFare(ticket);
+        return ticketManager.updatePrice(ticket, fare);
     }
 
 }

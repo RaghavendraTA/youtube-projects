@@ -33,7 +33,18 @@ public class ParkingSpot {
 
     private float price;
 
+    private float peakPrice;
+
     public ParkingSpot() {
+    }
+
+    public ParkingSpot(Long id, ParkingSpotType type, float price, float peakPrice) {
+        this.id = id;
+        this.type = type;
+        this.price = price;
+        this.peakPrice = peakPrice;
+        this.isAvailable = false;
+        this.vehicle = null;
     }
 
     public Long getId() {
@@ -66,5 +77,53 @@ public class ParkingSpot {
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    public float getPeakPrice() { return peakPrice; }
+
+    public void setPeakPrice(float peakPrice) {
+        this.peakPrice = peakPrice;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long id;
+        private boolean isAvailable;
+        private Vehicle vehicle;
+        private ParkingSpotType type;
+        private float price;
+        private float peakPrice;
+
+        Builder() {
+            this.isAvailable = false;
+            this.vehicle = null;
+        }
+
+        public Builder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setParkingSpotType(ParkingSpotType type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder setPrice(float price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder setPeakPrice(float peakPrice) {
+            this.peakPrice = peakPrice;
+            return this;
+        }
+
+        public ParkingSpot build() {
+            return new ParkingSpot(id, type, price, peakPrice);
+        }
     }
 }

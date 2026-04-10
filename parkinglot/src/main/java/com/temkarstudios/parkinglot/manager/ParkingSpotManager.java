@@ -1,5 +1,6 @@
 package com.temkarstudios.parkinglot.manager;
 
+import com.temkarstudios.parkinglot.dto.SpotRequest;
 import com.temkarstudios.parkinglot.enums.ParkingSpotType;
 import com.temkarstudios.parkinglot.enums.VehicleSize;
 import com.temkarstudios.parkinglot.model.ParkingSpot;
@@ -39,5 +40,15 @@ public class ParkingSpotManager {
             case MEDIUM -> ParkingSpotType.REGULAR;
             case LARGE -> ParkingSpotType.OVERSIZED;
         };
+    }
+
+    public ParkingSpot createNewSpot(SpotRequest request) {
+        ParkingSpot spot = ParkingSpot.builder()
+                .setId(request.getSpotId())
+                .setParkingSpotType(request.getSpotType())
+                .setPrice(request.getPrice())
+                .setPeakPrice(request.getPeakPrice())
+                .build();
+        return this.repository.saveAndFlush(spot);
     }
 }

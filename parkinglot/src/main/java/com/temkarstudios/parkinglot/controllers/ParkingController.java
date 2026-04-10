@@ -1,6 +1,7 @@
 package com.temkarstudios.parkinglot.controllers;
 
 import com.temkarstudios.parkinglot.dto.Request;
+import com.temkarstudios.parkinglot.dto.SpotRequest;
 import com.temkarstudios.parkinglot.dto.TicketDto;
 import com.temkarstudios.parkinglot.interfaces.ParkingService;
 import com.temkarstudios.parkinglot.model.Ticket;
@@ -37,6 +38,16 @@ public class ParkingController {
             return ResponseEntity.ok(TicketDto.getTicketDto(ticket));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(TicketDto.getFailedTicketDto(e.getMessage()));
+        }
+    }
+
+    @PostMapping(path = "/addSpot")
+    public ResponseEntity<?> addNewParkingSpot(@RequestBody SpotRequest request) {
+        try {
+            parkingService.addNewSpot(request);
+            return ResponseEntity.ok("Spot is successfully created");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

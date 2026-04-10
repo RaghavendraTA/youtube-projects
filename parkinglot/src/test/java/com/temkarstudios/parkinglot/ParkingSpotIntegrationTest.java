@@ -27,7 +27,16 @@ class ParkingSpotIntegrationTest {
     @BeforeEach
     void setUp() {
         // Clear parking_spot table
+        jdbcTemplate.execute("DELETE FROM ticket");
+
+        // Clear parking_spot table
         jdbcTemplate.execute("DELETE FROM parking_spot");
+
+        // Clear parking_spot table
+        jdbcTemplate.execute("DELETE FROM vehicle");
+
+        // Reset sequence (H2 database)
+        jdbcTemplate.execute("ALTER SEQUENCE ticket_seq RESTART WITH 1");
         
         // Reset sequence (H2 database)
         jdbcTemplate.execute("ALTER SEQUENCE parking_spot_seq RESTART WITH 1");
