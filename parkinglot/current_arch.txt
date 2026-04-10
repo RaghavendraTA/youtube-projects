@@ -1,0 +1,77 @@
+graph TD
+    %% --- Components ---
+    subgraph Data Models
+        V[Vehicle]
+        S[ParkingSpot]
+        T[Ticket]
+    end
+
+    subgraph Components
+        B(ParkingController)
+        C(ParkingService)
+        D{TicketManager: isVehicleAlreadyParked?}
+        E(VehicleManager)
+        G(ParkingSpotManager)
+        J(TicketManager)
+        L(TicketManager)
+    end
+
+    subgraph Repositories
+        F[VehicleRepository]
+        H{ParkingSpotRepository}
+        K[TicketRepository]
+    end
+
+    %% --- Flow ---
+    A[Client] -->|HTTP PUT /api/v1/checkin| B;
+    A -->|HTTP PUT /api/v1/checkout/{ticketId}| B;
+
+    subgraph Check-In Flow (enterVehicle)
+        B -->|Calls| C;
+        C -->|1. Validate| D;
+        D -- Yes -->|Throws Exception| B;
+        D -- No -->|2. Add Vehicle| E;
+        E -->|Saves/Retrieves Vehicle| F;
+        
+        F -->|3. Find Spot| G;
+        G -->|Finds Spot| H;
+        H -->|Returns Spot| I[ParkingSpot];
+        
+        I -->|4. Occupy Spot| G;
+        G -->|Updates Spot Status| H;
+        
+        I -->|5. Generate Ticket| J;
+        J -->|Saves Ticket| K;
+        
+        B -->|Returns TicketDto| A;
+    end
+
+    subgraph Check-Out Flow (exitVehicle)
+        B -->|Calls| C;
+        C -->|1. Retrieve Ticket| L;
+        L -->|Finds Ticket| M[TicketRepository];
+        
+        M -->|2. Vacate Spot| N(ParkingSpotManager);
+        N -->|Updates Spot Status| H;
+        
+        N -->|3. Calculate Price| O(TicketManager);
+        O -->|Updates Ticket| K;
+        
+        B -->|Returns TicketDto| A;
+    end
+
+    %% --- Relationships ---
+    V -- 1:1 --> S
+    V -- 1:N --> T
+    S -- 1:N --> T
+    
+    %% Service Dependencies
+    C -->|Uses| E
+    C -->|Uses| G
+    C -->|Uses| J
+    
+    %% Repository Interactions (Simplified)
+    F --> V
+    H --> S
+    K --> T
+```
