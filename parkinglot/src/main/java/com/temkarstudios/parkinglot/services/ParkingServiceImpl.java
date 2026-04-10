@@ -54,7 +54,7 @@ public class ParkingServiceImpl implements ParkingService {
      */
     public Ticket enterVehicle(Request request) throws Exception {
         // Step 1: Check Redis for available spots
-        List<Long> availableSpotsFromRedis = redisCacheService.getAvailableSpotsForVehicleType(vehicleType);
+        List<Long> availableSpotsFromRedis = redisCacheService.getAvailableSpotsForVehicleType(VehicleType.valueOf(request.getVehicleType()));
 
         if (availableSpotsFromRedis.isEmpty()) {
             throw new Exception("No Parking Spot found");
@@ -128,7 +128,7 @@ public class ParkingServiceImpl implements ParkingService {
 
         // Step 3: Compute pricing
         float finalFare = computePricing(ticket);
-        
+
         ticket.setExitTime(new Date());
         ticket.setFinalPrice(finalFare);
 

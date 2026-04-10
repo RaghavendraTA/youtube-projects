@@ -134,7 +134,7 @@ class ParkingSpotIntegrationTest {
         List<ParkingSpot> spots = parkingSpotRepository.findAll();
         
         boolean allAvailable = spots.stream()
-            .allMatch(ParkingSpot::isSpotAvailable);
+            .allMatch(ParkingSpot::isAvailable);
         
         assertTrue(allAvailable, "All spots should be available");
     }
