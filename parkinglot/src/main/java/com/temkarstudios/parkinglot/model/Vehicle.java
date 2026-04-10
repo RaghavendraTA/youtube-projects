@@ -41,6 +41,10 @@ public class Vehicle {
         return size;
     }
 
+    public VehicleType getType() {
+        return type;
+    }
+
     public static VehicleBuilder builder() {
         return new VehicleBuilder();
     }

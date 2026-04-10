@@ -51,7 +51,7 @@ public class ParkingSpot {
         return id;
     }
 
-    public boolean isSpotAvailable() {
+    public boolean isAvailable() {
         return isAvailable;
     }
 
@@ -91,16 +91,11 @@ public class ParkingSpot {
 
     public static class Builder {
         private Long id;
-        private boolean isAvailable;
-        private Vehicle vehicle;
         private ParkingSpotType type;
         private float price;
         private float peakPrice;
 
-        Builder() {
-            this.isAvailable = false;
-            this.vehicle = null;
-        }
+        Builder() {}
 
         public Builder setId(Long id) {
             this.id = id;

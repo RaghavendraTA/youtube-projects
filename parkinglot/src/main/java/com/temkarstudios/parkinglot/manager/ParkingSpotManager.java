@@ -22,6 +22,10 @@ public class ParkingSpotManager {
         return this.repository.findFirstByVehicleIsNullAndType(convertSizeToType(vehicle.getSize()));
     }
 
+    public Optional<ParkingSpot> findSpotById(Long spotId) {
+        return this.repository.findById(spotId);
+    }
+
     public void occupy(Vehicle vehicle, ParkingSpot spot) {
         spot.setLicensePlate(vehicle);
         spot.setSpotAvailability(false);
