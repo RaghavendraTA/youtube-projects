@@ -3,7 +3,11 @@ package com.temkarstudios.parkinglot.dto;
 import com.temkarstudios.parkinglot.model.Ticket;
 
 import java.util.Date;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class TicketDto {
 
     private Long TicketId;
@@ -15,11 +19,6 @@ public class TicketDto {
 
     private String message;
     private boolean hasError;
-
-    public TicketDto() {
-        this.message = null;
-        this.hasError = false;
-    }
 
     public TicketDto(Ticket ticket) {
         this.TicketId = ticket.getId();
@@ -44,37 +43,5 @@ public class TicketDto {
 
     public static TicketDto getFailedTicketDto(String message) {
         return new TicketDto(message);
-    }
-
-    public Long getTicketId() {
-        return TicketId;
-    }
-
-    public String getVehicleNo() {
-        return vehicleNo;
-    }
-
-    public Long getParkingSpotNo() {
-        return parkingSpotNo;
-    }
-
-    public Date getEntryTime() {
-        return entryTime;
-    }
-
-    public Date getExitTime() {
-        return exitTime;
-    }
-
-    public Float getPrice() {
-        return price;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public boolean isHasError() {
-        return hasError;
     }
 }

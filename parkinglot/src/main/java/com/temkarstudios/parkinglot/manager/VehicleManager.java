@@ -1,6 +1,7 @@
 package com.temkarstudios.parkinglot.manager;
 
 import com.temkarstudios.parkinglot.dto.Request;
+import com.temkarstudios.parkinglot.enums.VehicleType;
 import com.temkarstudios.parkinglot.model.Vehicle;
 import com.temkarstudios.parkinglot.repository.VehicleRepository;
 
@@ -17,13 +18,13 @@ public class VehicleManager {
 
     public Vehicle addVehicleEntry(Request request) {
         Optional<Vehicle> vehicle = repository.findById(request.getLicensePlate());
-        if (!vehicle.isEmpty()) {
+        if (vehicle.isPresent()) {
             return vehicle.get();
         }
 
         Vehicle newVehicle = Vehicle.builder()
-                .setLicensePlate(request.getLicensePlate())
-                .setVehicleType(request.getVehicleType())
+                .licensePlate(request.getLicensePlate())
+                .type(VehicleType.valueOf(request.getVehicleType()))
                 .build();
 
         return repository.saveAndFlush(newVehicle);

@@ -9,9 +9,17 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Vehicle {
 
     @Id
@@ -23,49 +31,4 @@ public class Vehicle {
 
     @Enumerated(EnumType.ORDINAL)
     private VehicleType type;
-
-    public Vehicle() {
-    }
-
-    public Vehicle(String licensePlate, VehicleType type) {
-        this.licensePlate = licensePlate;
-        this.size = type.getSize();
-        this.type = type;
-    }
-
-    public String getLicensePlate() {
-        return licensePlate;
-    }
-
-    public VehicleSize getSize() {
-        return size;
-    }
-
-    public VehicleType getType() {
-        return type;
-    }
-
-    public static VehicleBuilder builder() {
-        return new VehicleBuilder();
-    }
-
-    public static class VehicleBuilder {
-
-        private String licensePlate;
-        private VehicleType type;
-
-        public VehicleBuilder setLicensePlate(String licensePlate) {
-            this.licensePlate = licensePlate;
-            return this;
-        }
-
-        public VehicleBuilder setVehicleType(String vehicleType) {
-            this.type = VehicleType.valueOf(vehicleType);
-            return this;
-        }
-
-        public Vehicle build() {
-            return new Vehicle(licensePlate, type);
-        }
-    }
 }

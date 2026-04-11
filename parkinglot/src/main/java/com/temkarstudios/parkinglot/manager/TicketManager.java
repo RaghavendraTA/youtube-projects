@@ -18,9 +18,9 @@ public class TicketManager {
 
     public Ticket generateTicket(Vehicle vehicle, ParkingSpot spot) {
         var ticket = Ticket.builder()
-                .setVehicle(vehicle)
-                .setParkingSpot(spot)
-                .setEntryTime(new Date())
+                .vehicle(vehicle)
+                .parkingSpot(spot)
+                .entryTime(new Date())
                 .build();
         return ticketRepository.saveAndFlush(ticket);
     }

@@ -13,9 +13,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ParkingSpot {
 
     @Id
@@ -34,91 +42,4 @@ public class ParkingSpot {
     private float price;
 
     private float peakPrice;
-
-    public ParkingSpot() {
-    }
-
-    public ParkingSpot(Long id, ParkingSpotType type, float price, float peakPrice) {
-        this.id = id;
-        this.type = type;
-        this.price = price;
-        this.peakPrice = peakPrice;
-        this.isAvailable = false;
-        this.vehicle = null;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void setSpotAvailability(boolean isAvailable) {
-        this.isAvailable = isAvailable;
-    }
-
-    public Vehicle getVehicle() {
-        return vehicle;
-    }
-
-    public void setLicensePlate(Vehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    public ParkingSpotType getType() {
-        return type;
-    }
-
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public float getPeakPrice() { return peakPrice; }
-
-    public void setPeakPrice(float peakPrice) {
-        this.peakPrice = peakPrice;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private Long id;
-        private ParkingSpotType type;
-        private float price;
-        private float peakPrice;
-
-        Builder() {}
-
-        public Builder setId(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder setParkingSpotType(ParkingSpotType type) {
-            this.type = type;
-            return this;
-        }
-
-        public Builder setPrice(float price) {
-            this.price = price;
-            return this;
-        }
-
-        public Builder setPeakPrice(float peakPrice) {
-            this.peakPrice = peakPrice;
-            return this;
-        }
-
-        public ParkingSpot build() {
-            return new ParkingSpot(id, type, price, peakPrice);
-        }
-    }
 }

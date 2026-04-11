@@ -27,14 +27,14 @@ public class ParkingSpotManager {
     }
 
     public void occupy(Vehicle vehicle, ParkingSpot spot) {
-        spot.setLicensePlate(vehicle);
-        spot.setSpotAvailability(false);
+        spot.setVehicle(vehicle);
+        spot.setAvailable(false);
         this.repository.saveAndFlush(spot);
     }
 
     public void vacate(Vehicle vehicle, ParkingSpot spot) {
-        spot.setLicensePlate(null);
-        spot.setSpotAvailability(true);
+        spot.setVehicle(null);
+        spot.setAvailable(true);
         this.repository.saveAndFlush(spot);
     }
 
@@ -48,10 +48,10 @@ public class ParkingSpotManager {
 
     public ParkingSpot createNewSpot(SpotRequest request) {
         ParkingSpot spot = ParkingSpot.builder()
-                .setId(request.getSpotId())
-                .setParkingSpotType(request.getSpotType())
-                .setPrice(request.getPrice())
-                .setPeakPrice(request.getPeakPrice())
+                .id(request.getSpotId())
+                .type(request.getSpotType())
+                .price(request.getPrice())
+                .peakPrice(request.getPeakPrice())
                 .build();
         return this.repository.saveAndFlush(spot);
     }

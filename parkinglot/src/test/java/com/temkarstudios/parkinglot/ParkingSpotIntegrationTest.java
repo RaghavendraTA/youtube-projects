@@ -63,7 +63,7 @@ class ParkingSpotIntegrationTest {
 
         for (int i = 0; i < 10; i++) {
             ParkingSpot spot = new ParkingSpot();
-            spot.setSpotAvailability(true);
+            spot.setAvailable(true);
             spot.setPrice(prices[i]);
             
             // Use reflection to set the type since there's no setter
