@@ -126,10 +126,12 @@ public class ParkingServiceImpl implements ParkingService {
         Vehicle vehicle = ticket.getVehicle();
         ParkingSpot spot = ticket.getParkingSpot();
 
+        // Set exit time before computing pricing
+        ticket.setExitTime(new Date());
+
         // Step 3: Compute pricing
         float finalFare = computePricing(ticket);
 
-        ticket.setExitTime(new Date());
         ticket.setFinalPrice(finalFare);
 
         // Step 4: Update Redis
