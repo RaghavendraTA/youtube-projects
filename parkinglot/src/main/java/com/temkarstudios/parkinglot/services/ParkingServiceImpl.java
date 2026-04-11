@@ -13,6 +13,7 @@ import com.temkarstudios.parkinglot.model.Ticket;
 import com.temkarstudios.parkinglot.enums.VehicleType;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 
 import com.temkarstudios.parkinglot.manager.ParkingSpotManager;
 import com.temkarstudios.parkinglot.model.Vehicle;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ParkingServiceImpl implements ParkingService {
 
     private final ParkingSpotManager parkingSpotManager;
@@ -52,11 +54,19 @@ public class ParkingServiceImpl implements ParkingService {
      *    - Issue ticket (return API response)
      *    - Update DB in @Async mode
      */
+    /**
+     * Handles vehicle entry. The flow is:
+     * 1. Check Redis cache for available spots.
+     * 2. If cache miss or stale, fallback to DB.
+     * 3. Generate ticket and update cache.
+     * 4. Persist changes asynchronously.
+     */
     public Ticket enterVehicle(Request request) throws Exception {
         // Step 1: Check Redis for available spots
         List<Long> availableSpotsFromRedis = redisCacheService.getAvailableSpotsForVehicleType(VehicleType.valueOf(request.getVehicleType()));
 
         if (availableSpotsFromRedis.isEmpty()) {
+            log.warn("No available spots found in Redis for vehicle type {}", request.getVehicleType());
             throw new Exception("No Parking Spot found");
         }
 
@@ -81,6 +91,7 @@ public class ParkingServiceImpl implements ParkingService {
         if (spot == null) {
             Optional<ParkingSpot> dbSpot = parkingSpotManager.findEmptySpotForVehicle(vehicle);
             if (dbSpot.isEmpty()) {
+                log.error("No parking spot available in DB for vehicle {}", vehicle.getLicensePlate());
                 throw new Exception("No Parking Spot found");
             }
             spot = dbSpot.get();
@@ -103,6 +114,7 @@ public class ParkingServiceImpl implements ParkingService {
 
         // Step 6: Async update DB (doesn't block API response)
         asyncDatabaseUpdateService.updateDatabaseAfterVehicleEntry(vehicle, spot, ticket);
+        log.info("Vehicle {} entered spot {}", vehicle.getLicensePlate(), spot.getId());
 
         return ticket;
     }
@@ -116,9 +128,17 @@ public class ParkingServiceImpl implements ParkingService {
      * 5. Return the ticket
      * 6. Update DB in @Async mode
      */
+    /**
+     * Handles vehicle exit. The flow is:
+     * 1. Retrieve ticket.
+     * 2. Compute fare.
+     * 3. Update cache.
+     * 4. Persist changes asynchronously.
+     */
     public Ticket exitVehicle(Long ticketId) throws Exception {
         Optional<Ticket> hasTicket = ticketManager.getTicketById(ticketId);
         if (hasTicket.isEmpty()) {
+            log.error("No ticket found for id {}", ticketId);
             throw new Exception("No ticket found");
         }
 
@@ -143,6 +163,7 @@ public class ParkingServiceImpl implements ParkingService {
 
         // Step 5: Async update DB (doesn't block API response)
         asyncDatabaseUpdateService.updateDatabaseAfterVehicleExit(vehicle, spot, ticket);
+        log.info("Vehicle {} exited spot {}. Fare: {}", vehicle.getLicensePlate(), spot.getId(), finalFare);
 
         return ticket;
     }

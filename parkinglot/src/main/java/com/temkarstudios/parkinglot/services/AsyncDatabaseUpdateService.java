@@ -8,8 +8,10 @@ import com.temkarstudios.parkinglot.model.Vehicle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class AsyncDatabaseUpdateService {
 
     @Autowired
@@ -28,7 +30,7 @@ public class AsyncDatabaseUpdateService {
             parkingSpotManager.occupy(vehicle, parkingSpot);
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            System.err.println("Error during async database update after entry: " + e.getMessage());
+            log.error("Error during async database update after entry: {}", e.getMessage());
         }
     }
 
@@ -44,7 +46,7 @@ public class AsyncDatabaseUpdateService {
             ticketManager.updatePrice(ticket, ticket.getFinalPrice());
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            System.err.println("Error during async database update after exit: " + e.getMessage());
+            log.error("Error during async database update after exit: {}", e.getMessage());
         }
     }
 }

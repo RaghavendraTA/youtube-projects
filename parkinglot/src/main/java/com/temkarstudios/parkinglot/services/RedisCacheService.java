@@ -5,12 +5,14 @@ import com.temkarstudios.parkinglot.enums.VehicleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class RedisCacheService {
 
     @Autowired
@@ -34,7 +36,7 @@ public class RedisCacheService {
             }
         } catch (Exception e) {
             // If Redis fails, return empty list to fallback to DB
-            System.err.println("Error fetching available spots from Redis: " + e.getMessage());
+            log.error("Error fetching available spots from Redis: {}", e.getMessage());
         }
         return new ArrayList<>();
     }
@@ -46,7 +48,7 @@ public class RedisCacheService {
         try {
             redisTemplate.opsForSet().add(AVAILABLE_SPOTS_PREFIX + vehicleType.name(), spotId);
         } catch (Exception e) {
-            System.err.println("Error adding available spot to Redis: " + e.getMessage());
+            log.error("Error adding available spot to Redis: {}", e.getMessage());
         }
     }
 
@@ -57,7 +59,7 @@ public class RedisCacheService {
         try {
             redisTemplate.opsForSet().remove(AVAILABLE_SPOTS_PREFIX + vehicleType.name(), spotId);
         } catch (Exception e) {
-            System.err.println("Error removing available spot from Redis: " + e.getMessage());
+            log.error("Error removing available spot from Redis: {}", e.getMessage());
         }
     }
 
@@ -73,7 +75,7 @@ public class RedisCacheService {
                 return (OccupiedVehicleDto) occupiedInfo;
             }
         } catch (Exception e) {
-            System.err.println("Error fetching occupied vehicle info from Redis: " + e.getMessage());
+            log.error("Error fetching occupied vehicle info from Redis: {}", e.getMessage());
         }
         return null;
     }
@@ -85,7 +87,7 @@ public class RedisCacheService {
         try {
             redisTemplate.opsForValue().set(OCCUPIED_VEHICLE_PREFIX + licensePlate, occupiedInfo);
         } catch (Exception e) {
-            System.err.println("Error adding occupied vehicle to Redis: " + e.getMessage());
+            log.error("Error adding occupied vehicle to Redis: {}", e.getMessage());
         }
     }
 
@@ -96,7 +98,7 @@ public class RedisCacheService {
         try {
             redisTemplate.delete(OCCUPIED_VEHICLE_PREFIX + licensePlate);
         } catch (Exception e) {
-            System.err.println("Error removing occupied vehicle from Redis: " + e.getMessage());
+            log.error("Error removing occupied vehicle from Redis: {}", e.getMessage());
         }
     }
 
@@ -110,7 +112,7 @@ public class RedisCacheService {
                 addAvailableSpot(vehicleType, spotId);
             }
         } catch (Exception e) {
-            System.err.println("Error initializing available spots in Redis: " + e.getMessage());
+            log.error("Error initializing available spots in Redis: {}", e.getMessage());
         }
     }
 
@@ -119,10 +121,10 @@ public class RedisCacheService {
      */
     public boolean isSpotAvailableInCache(VehicleType vehicleType, Long spotId) {
         try {
-            return Boolean.TRUE.equals(redisTemplate.opsForSet()
+                return Boolean.TRUE.equals(redisTemplate.opsForSet()
                     .isMember(AVAILABLE_SPOTS_PREFIX + vehicleType.name(), spotId));
         } catch (Exception e) {
-            System.err.println("Error checking spot availability in Redis: " + e.getMessage());
+            log.error("Error checking spot availability in Redis: {}", e.getMessage());
             return false;
         }
     }
@@ -137,7 +139,7 @@ public class RedisCacheService {
                 redisTemplate.delete(keys);
             }
         } catch (Exception e) {
-            System.err.println("Error clearing Redis cache: " + e.getMessage());
+            log.error("Error clearing Redis cache: {}", e.getMessage());
         }
     }
 }

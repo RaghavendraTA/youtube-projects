@@ -14,11 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.Import;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(EmbeddedRedisTestConfig.class)
 @DisplayName("ParkingLot Service Integration Tests")
 class ParkingLotServiceIntegrationTest {
 
@@ -42,7 +44,7 @@ class ParkingLotServiceIntegrationTest {
     void testParkVehicle() throws Exception {
         // Arrange: clear repository and create a spot
         repository.deleteAll();
-        SpotRequest spotRequest = new SpotRequest(1L, 5f, 10f, ParkingSpotType.REGULAR);
+        SpotRequest spotRequest = new SpotRequest(10000L, 5f, 10f, ParkingSpotType.REGULAR);
         parkingSpotManager.createNewSpot(spotRequest);
 
         // Act: park a vehicle
@@ -77,7 +79,7 @@ class ParkingLotServiceIntegrationTest {
     void testExitVehicle() throws Exception {
         // Arrange: park a vehicle first
         repository.deleteAll();
-        SpotRequest spotRequest = new SpotRequest(1L, 5f, 10f, ParkingSpotType.REGULAR);
+        SpotRequest spotRequest = new SpotRequest(100000L, 5f, 10f, ParkingSpotType.REGULAR);
         parkingSpotManager.createNewSpot(spotRequest);
 
         Request request = new Request();

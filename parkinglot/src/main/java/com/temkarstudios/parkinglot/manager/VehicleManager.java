@@ -22,10 +22,12 @@ public class VehicleManager {
             return vehicle.get();
         }
 
+        VehicleType vt = VehicleType.valueOf(request.getVehicleType());
         Vehicle newVehicle = Vehicle.builder()
-                .licensePlate(request.getLicensePlate())
-                .type(VehicleType.valueOf(request.getVehicleType()))
-                .build();
+            .licensePlate(request.getLicensePlate())
+            .type(vt)
+            .size(vt.getSize())
+            .build();
 
         return repository.saveAndFlush(newVehicle);
     }
